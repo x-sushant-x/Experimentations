@@ -89,7 +89,7 @@ const char* ht_set(ht* table, const char* key, void* value) {
         }
     }
 
-    // TODO - Set Entry Function
+    return ht_set_entry(table->entries, table->cap, key, value, &table->length);
 }
 
 static bool ht_expand(ht* table) {
@@ -107,7 +107,7 @@ static bool ht_expand(ht* table) {
         ht_entry entry = table->entries[i];
 
         if (entry.key != NULL) {
-            // TODO - Set Entry function
+            ht_set_entry(new_entries, new_cap, entry.key, entry.value, NULL);
         }
     }
 
@@ -115,6 +115,37 @@ static bool ht_expand(ht* table) {
     table->entries = new_entries;
     table->cap = new_cap;
     return true;
+}
+
+static const char* ht_set_entry(ht_entry* entries, size_t cap, const char* key,
+                                void* value, size_t* length) {
+    uint64_t hash = hash_key(key);
+    size_t index = (size_t)(hash & (uint64_t)(cap - 1));
+
+    while (entries[index].key != NULL) {
+        if (strcmp(key, entries[index].key) == 0) {
+            return entries[index].value;
+        }
+
+        index++;
+        if (index >= cap) {
+            index = 0;
+        }
+    }
+
+    // This helps to diffrentiate when we are inserting key or rehashing the
+    // existing table while expanding it.
+    if (length != NULL) {
+        key = strdup(key);
+        if (key == NULL) {
+            return NULL;
+        }
+        (*length)++;
+    }
+
+    entries[index].key = (char*)key;
+    entries[index].value = value;
+    return key;
 }
 
 int main(int argc, char** argv) { return 0; }
