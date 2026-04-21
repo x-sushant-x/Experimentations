@@ -30,6 +30,6 @@ typedef struct {
 
 struct ht {
     ht_entry* entries;
-    size_t capacity;
+    size_t cap;
     size_t length;
 };
