@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <stddef.h>
 
 typedef struct ht ht;
@@ -15,13 +16,13 @@ size_t ht_length();
 typedef struct {
     const char* key;
     void* value;
-    ht* _table;
-    size_t _index;
+    ht* table;
+    size_t index;
 } hti;
 
 hti ht_iterator(ht* table);
 
-int ht_next(hti* it);
+bool ht_next(hti* it);
 
 typedef struct {
     const char* key;

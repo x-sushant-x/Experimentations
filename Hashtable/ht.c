@@ -148,4 +148,30 @@ static const char* ht_set_entry(ht_entry* entries, size_t cap, const char* key,
     return key;
 }
 
-int main(int argc, char** argv) { return 0; }
+size_t ht_length(ht* table) { return table->length; }
+
+hti ht_iterator(ht* table) {
+    hti it;
+    it.table = table;
+    it.index = 0;
+    return it;
+}
+
+bool ht_next(hti* it) {
+    ht* table = it->table;
+
+    while (it->index < table->cap) {
+        size_t i = it->index;
+
+        it->index++;
+
+        if (table->entries[i].key != NULL) {
+            ht_entry entry = table->entries[i];
+            it->key = entry.key;
+            it->value = entry.value;
+            return true;
+        }
+    }
+
+    return false;
+}
