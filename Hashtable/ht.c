@@ -4,17 +4,8 @@
 #include <stdlib.h>
 
 #define INITIAL_CAPACITY 16
-
-typedef struct {
-    const char* key;
-    void* value;
-} ht_entry;
-
-struct ht {
-    ht_entry* entries;
-    size_t capacity;
-    size_t length;
-};
+#define FNV_OFFSET 14695981039346656037UL
+#define FNV_PRIME 1099511628211UL
 
 ht* ht_create(void) {
     ht* table = malloc(sizeof(ht));
@@ -42,6 +33,25 @@ void ht_destroy(ht* table) {
 
     free(table->entries);
     free(table);
+}
+
+/*
+    Simple hashing function using FNV-1a algorithm.
+
+    Steps:
+    1. Xor each byte of key with OFFSET constant.
+    2. Multiply result by PRIME constant.
+    3. OFFSET & PRIME are already defined.
+*/
+static size_t hash_key(const char* key) {
+    uint64_t hash = FNV_OFFSET;
+
+    for (const char* p = key; *p; p++) {
+        hash ^= (uint64_t)(unsigned char)(*p);
+        hash *= FNV_PRIME;
+    }
+
+    return hash;
 }
 
 int main(int argc, char** argv) { return 0; }

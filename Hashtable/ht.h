@@ -22,3 +22,14 @@ typedef struct {
 hti ht_iterator(ht* table);
 
 int ht_next(hti* it);
+
+typedef struct {
+    const char* key;
+    void* value;
+} ht_entry;
+
+struct ht {
+    ht_entry* entries;
+    size_t capacity;
+    size_t length;
+};
